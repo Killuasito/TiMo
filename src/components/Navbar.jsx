@@ -87,7 +87,6 @@ function Navbar() {
   );
 
   return (
-    <>
       <nav
         className={`fixed w-full z-50 transition-all duration-500 ${
           scrolled ? "bg-white/90 backdrop-blur-md shadow-lg" : "bg-white"
