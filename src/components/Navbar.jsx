@@ -94,20 +94,11 @@ function Navbar() {
         }`}
       >
         <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center py-4">
-            <Link
-              to="/"
-              className="group relative flex items-center space-x-2 text-2xl font-black"
-              aria-label="Home"
-            >
-              <motion.span
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-gradient-to-r from-pink-500 via-purple-500 to-pink-500 bg-clip-text text-transparent bg-[size:400%] hover:bg-[size:200%] animate-gradient"
-              >
+          <div className="flex justify-between items-center h-16 md:h-20">
+            <Link to="/" className="text-xl md:text-2xl font-black">
+              <motion.span className="bg-gradient-to-r from-pink-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
                 Nossa História
               </motion.span>
-              <div className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-pink-500 to-purple-500 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out" />
             </Link>
 
             {/* Desktop Menu */}
@@ -152,13 +143,11 @@ function Navbar() {
               ))}
             </div>
 
-            {/* Mobile Menu Button */}
+            {/* Mobile Menu Button - Ajustado para melhor toque */}
             <motion.button
               whileTap={{ scale: 0.95 }}
-              className="md:hidden p-2 rounded-lg hover:bg-pink-50 transition-colors"
+              className="md:hidden p-3 rounded-lg hover:bg-pink-50"
               onClick={() => setIsOpen(!isOpen)}
-              aria-expanded={isOpen}
-              aria-label="Toggle menu"
             >
               {isOpen ? (
                 <FaTimes className="w-6 h-6 text-pink-600" />

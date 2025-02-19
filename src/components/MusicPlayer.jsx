@@ -109,80 +109,82 @@ function MusicPlayer() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-pink-50 pt-24 pb-12">
+    <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-pink-50 pt-20 pb-12">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="max-w-4xl mx-auto"
         >
-          <h2 className="text-4xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-8 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-6 text-center">
             Nossas Músicas
           </h2>
 
-          <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
-            {/* Player do Spotify */}
-            <div className="w-full mb-6 aspect-video">
+          <div className="bg-white rounded-2xl shadow-xl p-4 md:p-8 mb-6 md:mb-8">
+            {/* Player do Spotify - Ajustado para mobile */}
+            <div className="w-full mb-4 md:mb-6">
               <iframe
                 title={`${playlist[currentTrack].title} - ${playlist[currentTrack].artist}`}
-                src={`${playlist[currentTrack].embedUrl}?utm_source=generator`}
+                src={`${playlist[currentTrack].embedUrl}?utm_source=generator&theme=0&autoplay=1`}
                 width="100%"
-                height="352"
+                height={window.innerWidth < 768 ? "152" : "352"}
                 style={{ borderRadius: "12px" }}
                 frameBorder="0"
+                allowFullScreen=""
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                 loading="lazy"
               />
             </div>
 
-            {/* Controles e Informações */}
-            <div className="flex flex-col items-center space-y-4">
-              <div className="text-center">
-                <h3 className="text-xl font-bold text-gray-800">
+            {/* Controles e Informações - Layout melhorado para mobile */}
+            <div className="flex flex-col items-center space-y-3 md:space-y-4">
+              <div className="text-center w-full">
+                <h3 className="text-lg md:text-xl font-bold text-gray-800 line-clamp-1">
                   {playlist[currentTrack].title}
                 </h3>
-                <p className="text-gray-600">{playlist[currentTrack].artist}</p>
+                <p className="text-sm md:text-base text-gray-600 line-clamp-1">
+                  {playlist[currentTrack].artist}
+                </p>
               </div>
 
-              <div className="flex items-center space-x-6">
+              <div className="flex items-center justify-center w-full space-x-3 md:space-x-6">
                 <button
                   onClick={handlePrevious}
-                  className="p-3 hover:bg-pink-50 rounded-full transition-all duration-300"
+                  className="p-2 md:p-3 hover:bg-pink-50 rounded-full transition-all duration-300"
                 >
-                  <FaBackward
-                    className="text-gray-600 hover:text-pink-600"
-                    size={20}
-                  />
+                  <FaBackward className="text-gray-600 hover:text-pink-600 text-lg md:text-xl" />
                 </button>
+
                 <a
                   href={playlist[currentTrack].spotifyUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center space-x-2 px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors"
+                  className="flex items-center space-x-2 px-3 md:px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors text-sm md:text-base"
                 >
-                  <FaSpotify size={20} />
-                  <span>Abrir no Spotify</span>
+                  <FaSpotify className="text-base md:text-lg" />
+                  <span className="hidden sm:inline">Abrir no Spotify</span>
+                  <span className="sm:hidden">Spotify</span>
                 </a>
+
                 <button
                   onClick={handleNext}
-                  className="p-3 hover:bg-pink-50 rounded-full transition-all duration-300"
+                  className="p-2 md:p-3 hover:bg-pink-50 rounded-full transition-all duration-300"
                 >
-                  <FaForward
-                    className="text-gray-600 hover:text-pink-600"
-                    size={20}
-                  />
+                  <FaForward className="text-gray-600 hover:text-pink-600 text-lg md:text-xl" />
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Lista de músicas */}
-          <div className="bg-white rounded-2xl shadow-lg p-6">
-            <div className="flex items-center space-x-2 mb-4">
-              <FaSpotify className="text-green-500 text-xl" />
-              <h3 className="text-xl font-bold text-gray-800">Playlist</h3>
+          {/* Lista de músicas - Versão mobile otimizada */}
+          <div className="bg-white rounded-2xl shadow-lg p-4 md:p-6">
+            <div className="flex items-center space-x-2 mb-3 md:mb-4">
+              <FaSpotify className="text-green-500 text-lg md:text-xl" />
+              <h3 className="text-lg md:text-xl font-bold text-gray-800">
+                Playlist
+              </h3>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1 md:space-y-2">
               {playlist.map((track, index) => (
                 <motion.div
                   key={track.id}
@@ -190,24 +192,21 @@ function MusicPlayer() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
                   onClick={() => setCurrentTrack(index)}
-                  className={`flex items-center p-4 rounded-lg cursor-pointer transition-all duration-200 
+                  className={`flex items-center p-3 md:p-4 rounded-lg cursor-pointer transition-all duration-200 
                     ${
                       currentTrack === index
                         ? "bg-pink-50 text-pink-600"
                         : "hover:bg-gray-50"
                     }`}
                 >
-                  <div className="flex-1">
-                    <h4 className="font-medium">{track.title}</h4>
-                    <p className="text-sm text-gray-600">{track.artist}</p>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium text-sm md:text-base truncate">
+                      {track.title}
+                    </h4>
+                    <p className="text-xs md:text-sm text-gray-600 truncate">
+                      {track.artist}
+                    </p>
                   </div>
-                  <span
-                    className={`text-sm ${
-                      currentTrack === index ? "text-pink-600" : "text-gray-400"
-                    }`}
-                  >
-                    {currentTrack === index ? "Tocando" : "Clique para tocar"}
-                  </span>
                 </motion.div>
               ))}
             </div>

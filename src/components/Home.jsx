@@ -20,7 +20,7 @@ function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-5xl md:text-7xl font-bold mb-6"
+            className="text-4xl md:text-7xl font-bold mb-4 md:mb-6"
           >
             <span className="bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
               Nossa História
@@ -31,7 +31,7 @@ function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="text-xl md:text-2xl text-gray-600 max-w-2xl mb-12 leading-relaxed"
+            className="text-lg md:text-2xl text-gray-600 max-w-2xl mb-8 md:mb-12 leading-relaxed px-4"
           >
             Bem-vindo(a) ao nosso cantinho especial, onde guardamos nossas
             memórias mais preciosas e celebramos cada momento juntos.
@@ -41,7 +41,7 @@ function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl w-full"
+            className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-4xl mx-auto px-4"
           >
             {[
               {
@@ -78,20 +78,19 @@ function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.8 + index * 0.1 }}
-                className="group relative overflow-hidden rounded-2xl bg-white p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                className="group relative overflow-hidden rounded-xl bg-white p-4 md:p-6 shadow-lg"
               >
-                <div className="absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
-                <div className="flex items-center gap-4 mb-4">
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-3 mb-3">
                   <div
-                    className={`p-3 rounded-xl bg-gradient-to-r ${item.color} text-white`}
+                    className={`p-2 md:p-3 rounded-xl bg-gradient-to-r ${item.color} text-white`}
                   >
-                    <item.icon size={24} />
+                    <item.icon size={20} />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-800">
+                  <h3 className="text-lg md:text-xl font-bold text-gray-800">
                     {item.title}
                   </h3>
                 </div>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-sm md:text-base text-gray-600 leading-relaxed">
                   {item.description}
                 </p>
               </motion.div>

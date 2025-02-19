@@ -8,23 +8,23 @@ function SecretLetter() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl p-8"
+          className="max-w-lg mx-auto bg-white rounded-2xl shadow-xl p-6 md:p-8"
         >
-          <div className="flex justify-center mb-6">
-            <FaEnvelope className="text-5xl text-pink-500" />
+          <div className="flex justify-center mb-4 md:mb-6">
+            <FaEnvelope className="text-4xl md:text-5xl text-pink-500" />
           </div>
 
-          <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-center bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-6 md:mb-8">
             Carta Secreta
           </h2>
 
           <div className="prose prose-pink mx-auto">
-            <p className="text-gray-700 text-lg leading-relaxed mb-6">
+            <p className="text-base md:text-lg leading-relaxed text-gray-700">
               {" "}
               Querida Ti mo,
             </p>
 
-            <p className="text-gray-700 text-lg leading-relaxed mb-6">
+            <p className="text-base md:text-lg leading-relaxed text-gray-700">
               OIIIII AMORRRRRRR. <br />
               Sei que este presente era pra ser dado apenas no dia 27/04/2025.{" "}
               <br />
@@ -32,7 +32,7 @@ function SecretLetter() {
             </p>
 
             {/* Adicione sua mensagem secreta aqui */}
-            <p className="text-gray-700 text-lg leading-relaxed mb-6">
+            <p className="text-base md:text-lg leading-relaxed text-gray-700">
               Há exatos 299 dias atrás começamos nossa jornada inesquecivel de
               amor. <br />
               Sei que sempre houve altos e baixos, mas com certeza mais altos do
@@ -57,7 +57,7 @@ function SecretLetter() {
               <FaHeart className="text-pink-500 text-4xl mx-auto animate-pulse" />
             </div>
 
-            <p className="text-gray-700 text-lg text-right mt-6">
+            <p className="text-base md:text-lg text-right mt-6 text-gray-700">
               Com amor, Ti mo ❤️
             </p>
           </div>

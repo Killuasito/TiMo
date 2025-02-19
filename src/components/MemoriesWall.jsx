@@ -191,7 +191,7 @@ function MemoriesWall() {
 
         {/* Grade de memórias */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
@@ -203,21 +203,21 @@ function MemoriesWall() {
               transition={{ delay: index * 0.1 }}
               className={`${
                 memoryTypes[memory.type].color
-              } rounded-2xl p-6 shadow-xl hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 relative group`}
+              } rounded-xl p-4 md:p-6 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 relative group`}
             >
-              {/* Conteúdo principal */}
-              <div className="flex justify-between items-start mb-4">
-                <div className="text-3xl text-pink-500">
+              {/* Conteúdo da memória */}
+              <div className="flex justify-between items-start mb-3 md:mb-4">
+                <div className="text-2xl md:text-3xl text-pink-500">
                   <memory.icon className="filter drop-shadow-md" />
                 </div>
-                <span className="text-sm font-medium text-gray-600 bg-white/70 backdrop-blur-sm px-3 py-1 rounded-full">
+                <span className="text-xs md:text-sm font-medium text-gray-600 bg-white/70 backdrop-blur-sm px-2 md:px-3 py-1 rounded-full">
                   {new Date(memory.date).toLocaleDateString("pt-BR")}
                 </span>
               </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-3">
+              <h3 className="text-lg md:text-xl font-bold text-gray-800 mb-2 md:mb-3">
                 {memory.title}
               </h3>
-              <p className="text-gray-600 leading-relaxed mb-4">
+              <p className="text-sm md:text-base text-gray-600 leading-relaxed mb-4">
                 {memory.description}
               </p>
               <div className="flex items-center justify-between">

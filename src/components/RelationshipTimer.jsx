@@ -112,7 +112,7 @@ function RelationshipTimer() {
 
           {/* Timer Grid */}
           <motion.div
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 max-w-6xl w-full mb-12"
+            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-6 max-w-6xl w-full mb-8 md:mb-12"
             variants={{
               hidden: { opacity: 0 },
               show: {
@@ -135,14 +135,14 @@ function RelationshipTimer() {
                 className="relative group"
               >
                 <div
-                  className={`bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 text-center transform group-hover:-translate-y-1`}
+                  className={`bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-4 md:p-6 text-center transform group-hover:-translate-y-1`}
                 >
                   <div
-                    className={`text-4xl md:text-5xl font-bold bg-gradient-to-r ${block.gradient} bg-clip-text text-transparent`}
+                    className={`text-2xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r ${block.gradient} bg-clip-text text-transparent`}
                   >
                     {block.value}
                   </div>
-                  <div className="text-gray-600 font-medium mt-2">
+                  <div className="text-xs md:text-sm text-gray-600 font-medium mt-1 md:mt-2">
                     {block.label}
                   </div>
                 </div>
