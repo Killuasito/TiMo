@@ -22,9 +22,11 @@ import { useEffect } from "react";
 
 function App() {
   useEffect(() => {
-    const hash = window.location.hash;
-    if (hash) {
-      const token = hash
+    if (
+      window.location.pathname === "/spotify-callback" &&
+      window.location.hash
+    ) {
+      const token = window.location.hash
         .substring(1)
         .split("&")
         .find((elem) => elem.startsWith("access_token"))
@@ -32,7 +34,6 @@ function App() {
 
       if (token) {
         localStorage.setItem("spotify_token", token);
-        window.location.hash = "";
         window.location.href = "/music";
       }
     }
@@ -69,6 +70,10 @@ function App() {
                     <PetWrapper />
                   </div>
                 }
+              />
+              <Route
+                path="/spotify-callback"
+                element={<Navigate to="/music" replace />}
               />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
