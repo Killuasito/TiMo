@@ -283,13 +283,10 @@ function MusicPlayer() {
   };
 
   const loginToSpotify = () => {
-    // Store current route to return after auth
-    localStorage.setItem("spotify_auth_return", window.location.pathname);
-
     const authEndpoint = "https://accounts.spotify.com/authorize";
     const queryParams = new URLSearchParams({
       client_id: spotifyConfig.clientId,
-      redirect_uri: window.location.origin + "/music",
+      redirect_uri: spotifyConfig.redirectUri,
       scope: spotifyConfig.scopes.join(" "),
       response_type: "token",
       show_dialog: true,
