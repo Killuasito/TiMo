@@ -15,7 +15,6 @@ import Wishlist from "./components/Wishlist";
 import Login from "./components/Login";
 import SecretLetter from "./components/SecretLetter";
 import ProtectedRoute from "./components/ProtectedRoute";
-import SpotifyCallback from "./components/SpotifyCallback";
 import { ThemeProvider } from "./context/ThemeContext";
 import ChatComponent from "./components/ChatComponent";
 import PetWrapper from "./components/PetWrapper";
@@ -44,7 +43,6 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route path="/callback" element={<SpotifyCallback />} />
               <Route path="/chat" element={<ChatComponent />} />
               <Route
                 path="/pet"
