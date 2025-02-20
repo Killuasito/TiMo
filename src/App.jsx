@@ -53,7 +53,10 @@ function App() {
                   </div>
                 }
               />
-              <Route path="/callback" element={<SpotifyCallback />} />
+              <Route
+                path="/auth/spotify/callback"
+                element={<SpotifyCallback />}
+              />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
