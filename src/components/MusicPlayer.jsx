@@ -284,15 +284,16 @@ function MusicPlayer() {
 
   const loginToSpotify = () => {
     const authEndpoint = "https://accounts.spotify.com/authorize";
-    const queryParams = new URLSearchParams({
+    const params = new URLSearchParams({
       client_id: spotifyConfig.clientId,
       redirect_uri: spotifyConfig.redirectUri,
-      scope: spotifyConfig.scopes.join(" "),
       response_type: "token",
+      scope: spotifyConfig.scopes.join(" "),
       show_dialog: true,
+      state: "music", // Add state to redirect after auth
     });
 
-    window.location = `${authEndpoint}?${queryParams.toString()}`;
+    window.location.href = `${authEndpoint}?${params.toString()}`;
   };
 
   const handleDeleteTrack = (trackId) => {

@@ -18,8 +18,26 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { ThemeProvider } from "./context/ThemeContext";
 import ChatComponent from "./components/ChatComponent";
 import PetWrapper from "./components/PetWrapper";
+import { useEffect } from "react";
 
 function App() {
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash) {
+      const token = hash
+        .substring(1)
+        .split("&")
+        .find((elem) => elem.startsWith("access_token"))
+        ?.split("=")[1];
+
+      if (token) {
+        localStorage.setItem("spotify_token", token);
+        window.location.hash = "";
+        window.location.href = "/music";
+      }
+    }
+  }, []);
+
   return (
     <ThemeProvider>
       <Router>
