@@ -23,11 +23,8 @@ import SpotifyCallback from "./components/SpotifyCallback";
 
 function App() {
   useEffect(() => {
-    // Check if we're on the callback route and have a hash
-    if (
-      window.location.pathname === "/spotify-callback" &&
-      window.location.hash
-    ) {
+    // Check if we're on the music route and have a hash
+    if (window.location.pathname === "/music" && window.location.hash) {
       const token = window.location.hash
         .substring(1)
         .split("&")
@@ -36,8 +33,7 @@ function App() {
 
       if (token) {
         localStorage.setItem("spotify_token", token);
-        // Use window.location.replace instead of Navigate
-        window.location.replace("/music");
+        window.location.reload(); // Reload to apply the token
       }
     }
   }, []);
