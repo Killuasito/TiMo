@@ -1,8 +1,6 @@
 export const spotifyConfig = {
-  clientId: process.env.VITE_SPOTIFY_CLIENT_ID,
-  redirectUri:
-    process.env.VITE_REDIRECT_URI ||
-    "https://seu-dominio-vercel.vercel.app/callback",
+  clientId: import.meta.env.VITE_SPOTIFY_CLIENT_ID,
+  redirectUri: import.meta.env.VITE_REDIRECT_URI,
   scopes: [
     "streaming",
     "user-read-email",
