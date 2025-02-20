@@ -270,10 +270,9 @@ function MusicPlayer() {
       response_type: "token",
       scope: spotifyConfig.scopes.join(" "),
       show_dialog: true,
-      state: "music", // Add state to redirect after auth
     });
 
-    window.location.href = `${authEndpoint}?${params.toString()}`;
+    window.location.href = `${authEndpoint}?${params}`;
   };
 
   const handleDeleteTrack = (trackId) => {
