@@ -1,10 +1,6 @@
-const REDIRECT_URI = import.meta.env.PROD
-  ? "https://timo-six.vercel.app/spotify-callback"
-  : "http://localhost:5173/spotify-callback";
-
 export const spotifyConfig = {
   clientId: "cfcd496346374776861564414cc3656c",
-  redirectUri: REDIRECT_URI,
+  redirectUri: "http://localhost:5173/spotify-callback",
   scopes: [
     "streaming",
     "user-read-email",
