@@ -301,7 +301,7 @@ const PetComponent = () => {
   }, [stats, happiness, cleanliness]);
 
   return (
-    <div className="fixed bottom-4 left-4 z-50 md:right-4 md:left-auto">
+    <div className="fixed bottom-24 md:bottom-4 left-4 z-40 md:right-4 md:left-auto">
       <AnimatePresence>
         {showStats && (
           <motion.div
@@ -310,7 +310,7 @@ const PetComponent = () => {
             exit={{ opacity: 0, y: 20 }}
             className={`absolute bottom-full left-0 md:left-auto md:right-0 mb-2 p-4 rounded-lg shadow-lg
               ${isSleeping ? "bg-gray-800/95" : "bg-gray-900/95"} 
-              text-white backdrop-blur-sm w-64`}
+              text-white backdrop-blur-sm w-64 max-h-[80vh] overflow-y-auto`}
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between mb-4">
