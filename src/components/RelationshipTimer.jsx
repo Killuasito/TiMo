@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FaHeart, FaCalendarAlt } from "react-icons/fa";
+import { useTheme } from "../context/ThemeContext";
 
 function RelationshipTimer() {
+  const { isDarkMode } = useTheme();
   const [time, setTime] = useState({
     years: 0,
     months: 0,
@@ -82,7 +84,13 @@ function RelationshipTimer() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b  pt-24 pb-12">
+    <div
+      className={`min-h-screen transition-all duration-500 ${
+        isDarkMode
+          ? "bg-gray-900 text-gray-100"
+          : "bg-gradient-to-b from-pink-50 via-white to-pink-50"
+      } pt-24 pb-12`}
+    >
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -95,7 +103,11 @@ function RelationshipTimer() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4"
+              className={`text-4xl md:text-5xl font-bold ${
+                isDarkMode
+                  ? "text-transparent bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text"
+                  : "bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent"
+              } mb-4`}
             >
               Nosso Tempo Juntos
             </motion.h2>
@@ -103,7 +115,7 @@ function RelationshipTimer() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="text-gray-600 text-lg max-w-2xl mx-auto"
+              className={isDarkMode ? "text-gray-300" : "text-gray-600"}
             >
               Cada segundo ao seu lado é uma nova história sendo escrita em
               nosso livro de amor.
@@ -111,38 +123,26 @@ function RelationshipTimer() {
           </div>
 
           {/* Timer Grid */}
-          <motion.div
-            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-6 max-w-6xl w-full mb-8 md:mb-12"
-            variants={{
-              hidden: { opacity: 0 },
-              show: {
-                opacity: 1,
-                transition: {
-                  staggerChildren: 0.1,
-                },
-              },
-            }}
-            initial="hidden"
-            animate="show"
-          >
+          <motion.div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-6 max-w-6xl w-full mb-8 md:mb-12">
             {timeBlocks.map((block, index) => (
-              <motion.div
-                key={block.label}
-                variants={{
-                  hidden: { opacity: 0, y: 20 },
-                  show: { opacity: 1, y: 0 },
-                }}
-                className="relative group"
-              >
+              <motion.div key={block.label} className="relative group">
                 <div
-                  className={`bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-4 md:p-6 text-center transform group-hover:-translate-y-1`}
+                  className={`${
+                    isDarkMode
+                      ? "bg-gray-800 shadow-lg shadow-black/20"
+                      : "bg-white"
+                  } rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-4 md:p-6 text-center transform group-hover:-translate-y-1`}
                 >
                   <div
                     className={`text-2xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r ${block.gradient} bg-clip-text text-transparent`}
                   >
                     {block.value}
                   </div>
-                  <div className="text-xs md:text-sm text-gray-600 font-medium mt-1 md:mt-2">
+                  <div
+                    className={`text-xs md:text-sm ${
+                      isDarkMode ? "text-gray-400" : "text-gray-600"
+                    } font-medium mt-1 md:mt-2`}
+                  >
                     {block.label}
                   </div>
                 </div>
@@ -155,32 +155,56 @@ function RelationshipTimer() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
-            className="bg-white rounded-2xl shadow-lg p-8 text-center max-w-xl mx-auto relative overflow-hidden"
+            className={`${
+              isDarkMode
+                ? "bg-gray-800/90 shadow-lg shadow-black/20"
+                : "bg-white"
+            } rounded-2xl shadow-lg p-8 text-center max-w-xl mx-auto relative overflow-hidden`}
           >
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-500 to-purple-600" />
             <div className="flex items-center justify-center space-x-3 mb-4">
-              <FaCalendarAlt className="text-2xl text-pink-600" />
-              <h3 className="text-xl font-bold text-gray-800">
+              <FaCalendarAlt
+                className={`text-2xl ${
+                  isDarkMode ? "text-pink-400" : "text-pink-600"
+                }`}
+              />
+              <h3
+                className={`text-xl font-bold ${
+                  isDarkMode ? "text-gray-100" : "text-gray-800"
+                }`}
+              >
                 Nossa História Começou
               </h3>
             </div>
-            <p className="text-lg text-gray-600">
+            <p className={isDarkMode ? "text-gray-300" : "text-gray-600"}>
               Em{" "}
-              <span className="font-semibold text-pink-600">
+              <span
+                className={
+                  isDarkMode
+                    ? "text-pink-400 font-semibold"
+                    : "text-pink-600 font-semibold"
+                }
+              >
                 {formatDate(startDate)}
               </span>
             </p>
             <div className="mt-4 flex justify-center">
-              <FaHeart className="text-pink-500 animate-pulse text-2xl" />
+              <FaHeart
+                className={`${
+                  isDarkMode ? "text-pink-400" : "text-pink-500"
+                } animate-pulse text-2xl`}
+              />
             </div>
           </motion.div>
 
           {/* Decorative Elements */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <div className="absolute top-20 left-10 w-64 h-64 bg-pink-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob" />
-            <div className="absolute top-20 right-10 w-64 h-64 bg-purple-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000" />
-            <div className="absolute bottom-20 left-20 w-64 h-64 bg-indigo-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000" />
-          </div>
+          {!isDarkMode && (
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+              <div className="absolute top-20 left-10 w-64 h-64 bg-pink-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob" />
+              <div className="absolute top-20 right-10 w-64 h-64 bg-purple-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000" />
+              <div className="absolute bottom-20 left-20 w-64 h-64 bg-indigo-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000" />
+            </div>
+          )}
         </motion.div>
       </div>
     </div>

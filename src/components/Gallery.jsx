@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaHeart,
@@ -8,27 +8,12 @@ import {
   FaPlus,
   FaUpload,
 } from "react-icons/fa";
+import { useTheme } from "../context/ThemeContext";
 
-// Exemplo de fotos - Atualize com suas próprias fotos
-const initialPhotos = [
-  {
-    id: 1,
-    url: "https://i.ibb.co/7JbPvHRF/PHOTO-2025-02-17-17-14-53-1.jpg",
-    description: "Nossa primeira foto juntos",
-    date: "2024-04-27",
-    location: "Local especial",
-  },
-  {
-    id: 2,
-    url: "https://i.ibb.co/exemplo2/foto2.jpg", // Link direto da imagem
-    description: "Aniversário especial",
-    date: "2024-05-15",
-    location: "Restaurante favorito",
-  },
-  // Adicione mais fotos
-];
+const API_URL = "http://localhost:5000/api";
 
 function Gallery() {
+  const { isDarkMode } = useTheme();
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -38,17 +23,23 @@ function Gallery() {
     date: new Date().toISOString().split("T")[0],
     location: "",
   });
-  const [photos, setPhotos] = useState(() => {
-    const saved = localStorage.getItem("gallery");
-    return saved ? JSON.parse(saved) : initialPhotos;
-  });
+  const [photos, setPhotos] = useState([]);
 
-  // Função para salvar fotos no localStorage
-  const savePhotos = (newPhotos) => {
-    localStorage.setItem("gallery", JSON.stringify(newPhotos));
+  useEffect(() => {
+    fetchPhotos();
+  }, []);
+
+  const fetchPhotos = async () => {
+    try {
+      const response = await fetch(`${API_URL}/gallery`);
+      const data = await response.json();
+      setPhotos(data);
+    } catch (error) {
+      console.error("Erro ao carregar fotos:", error);
+    }
   };
 
-  const handleAddPhoto = (e) => {
+  const handleAddPhoto = async (e) => {
     e.preventDefault();
     if (!isValidImageUrl(newPhoto.url)) {
       alert(`URL inválida. Use o formato correto:
@@ -59,33 +50,35 @@ function Gallery() {
       return;
     }
 
-    const newPhotoItem = {
-      ...newPhoto,
-      id: Date.now(),
-    };
-
-    const updatedPhotos = [...photos, newPhotoItem];
-    setPhotos(updatedPhotos);
-    savePhotos(updatedPhotos);
-    setShowAddForm(false);
-    setNewPhoto({
-      url: "",
-      description: "",
-      date: new Date().toISOString().split("T")[0],
-      location: "",
-    });
+    try {
+      const response = await fetch(`${API_URL}/gallery`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newPhoto),
+      });
+      const savedPhoto = await response.json();
+      setPhotos([savedPhoto, ...photos]);
+      setShowAddForm(false);
+      setNewPhoto({
+        url: "",
+        description: "",
+        date: new Date().toISOString().split("T")[0],
+        location: "",
+      });
+    } catch (error) {
+      console.error("Erro ao adicionar foto:", error);
+    }
   };
 
-  // Função para validar URL da imagem
   const isValidImageUrl = (url) => {
     if (!url) return false;
 
-    // Verifica se é uma URL do ImgBB no formato correto
     if (url.includes("ibb.co")) {
       return url.startsWith("https://i.ibb.co/");
     }
 
-    // Verifica outras URLs de imagem
     return url.match(/\.(jpeg|jpg|gif|png)$/i) != null;
   };
 
@@ -108,36 +101,50 @@ function Gallery() {
     );
   };
 
-  // Adicionar função para deletar foto
-  const handleDeletePhoto = (id) => {
+  const handleDeletePhoto = async (photoId) => {
     if (window.confirm("Tem certeza que deseja excluir esta foto?")) {
-      const updatedPhotos = photos.filter((photo) => photo.id !== id);
-      setPhotos(updatedPhotos);
-      savePhotos(updatedPhotos);
-      if (selectedPhoto?.id === id) {
-        setSelectedPhoto(null);
+      try {
+        await fetch(`${API_URL}/gallery/${photoId}`, {
+          method: "DELETE",
+        });
+        setPhotos(photos.filter((photo) => photo._id !== photoId));
+        if (selectedPhoto?._id === photoId) {
+          setSelectedPhoto(null);
+        }
+      } catch (error) {
+        console.error("Erro ao deletar foto:", error);
       }
     }
   };
 
-  // Adicionar botão para limpar todas as fotos
   const handleClearAllPhotos = () => {
     if (window.confirm("Tem certeza que deseja limpar todas as fotos?")) {
       setPhotos([]);
-      savePhotos([]);
       setSelectedPhoto(null);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b pt-24 pb-12">
-      <div className="container mx-auto px-4">
+    <div
+      className={`min-h-screen ${
+        isDarkMode
+          ? "bg-gray-900 text-gray-100"
+          : "bg-gradient-to-b from-pink-50 via-white to-pink-50"
+      }`}
+    >
+      <div className="container mx-auto px-4 pt-24">
         <motion.div className="flex flex-col md:flex-row justify-between items-center mb-12">
           <div className="text-center md:text-left mb-6 md:mb-0">
-            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4">
+            <h2
+              className={`text-4xl md:text-5xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4`}
+            >
               Nossa Galeria
             </h2>
-            <p className="text-gray-600 text-lg">
+            <p
+              className={`${
+                isDarkMode ? "text-gray-300" : "text-gray-600"
+              } text-lg`}
+            >
               Momentos especiais capturados em imagens
             </p>
           </div>
@@ -171,7 +178,9 @@ function Gallery() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="group relative aspect-square overflow-hidden rounded-2xl shadow-lg bg-gray-50"
+              className={`group relative aspect-square overflow-hidden rounded-2xl shadow-lg ${
+                isDarkMode ? "bg-gray-800" : "bg-gray-50"
+              }`}
               whileHover={{ y: -5 }}
             >
               <img
@@ -184,21 +193,27 @@ function Gallery() {
                     "https://via.placeholder.com/400x400?text=Imagem+não+encontrada";
                 }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div
+                className={`absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent ${
+                  isDarkMode ? "hover:from-black/80" : ""
+                }`}
+              >
                 <div className="absolute top-2 right-2">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDeletePhoto(photo.id);
+                      handleDeletePhoto(photo._id);
                     }}
-                    className="p-2 rounded-full bg-red-500/80 hover:bg-red-600/80 text-white transform hover:scale-110 transition-all duration-200"
+                    className="p-2 rounded-full bg-red-500/80 hover:bg-red-600 text-white transform hover:scale-110 transition-all duration-200"
                     title="Excluir foto"
                   >
                     <FaTimes size={16} />
                   </button>
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                  <p className="font-medium text-sm mb-1">{photo.location}</p>
+                  <p className="font-medium text-sm mb-1 truncate">
+                    {photo.location}
+                  </p>
                   <p className="text-xs opacity-75">
                     {new Date(photo.date).toLocaleDateString("pt-BR")}
                   </p>
@@ -208,7 +223,6 @@ function Gallery() {
           ))}
         </motion.div>
 
-        {/* Modal para adicionar foto */}
         <AnimatePresence>
           {showAddForm && (
             <motion.div
@@ -222,16 +236,26 @@ function Gallery() {
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
-                className="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl"
+                className={`${
+                  isDarkMode ? "bg-gray-800" : "bg-white"
+                } rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl`}
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+                  <h3
+                    className={`text-xl font-bold ${
+                      isDarkMode
+                        ? "text-white"
+                        : "bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent"
+                    }`}
+                  >
                     Adicionar Nova Foto
                   </h3>
                   <button
                     onClick={() => setShowAddForm(false)}
-                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                    className={`text-gray-400 hover:${
+                      isDarkMode ? "text-gray-200" : "text-gray-600"
+                    } transition-colors`}
                   >
                     <FaTimes size={20} />
                   </button>
@@ -239,7 +263,11 @@ function Gallery() {
 
                 <form onSubmit={handleAddPhoto} className="space-y-4">
                   <div>
-                    <label className="block text-gray-700 text-sm font-medium mb-2">
+                    <label
+                      className={`block text-sm font-medium mb-2 ${
+                        isDarkMode ? "text-gray-200" : "text-gray-700"
+                      }`}
+                    >
                       URL da Imagem
                     </label>
                     <div className="space-y-2">
@@ -249,7 +277,11 @@ function Gallery() {
                         onChange={(e) =>
                           setNewPhoto({ ...newPhoto, url: e.target.value })
                         }
-                        className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                        className={`w-full p-2 rounded-lg transition-all duration-200 ${
+                          isDarkMode
+                            ? "bg-gray-700 border-gray-600 text-white focus:border-pink-500"
+                            : "border border-gray-200 focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                        }`}
                         placeholder="https://i.ibb.co/XXXXX/sua-imagem.jpg"
                         required
                       />
@@ -262,7 +294,11 @@ function Gallery() {
                   </div>
 
                   <div>
-                    <label className="block text-gray-700 text-sm font-medium mb-2">
+                    <label
+                      className={`block text-sm font-medium mb-2 ${
+                        isDarkMode ? "text-gray-200" : "text-gray-700"
+                      }`}
+                    >
                       Descrição
                     </label>
                     <input
@@ -274,13 +310,21 @@ function Gallery() {
                           description: e.target.value,
                         })
                       }
-                      className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                      className={`w-full p-2 rounded-lg transition-all duration-200 ${
+                        isDarkMode
+                          ? "bg-gray-700 border-gray-600 text-white focus:border-pink-500"
+                          : "border border-gray-200 focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                      }`}
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-gray-700 text-sm font-medium mb-2">
+                    <label
+                      className={`block text-sm font-medium mb-2 ${
+                        isDarkMode ? "text-gray-200" : "text-gray-700"
+                      }`}
+                    >
                       Data
                     </label>
                     <input
@@ -289,13 +333,21 @@ function Gallery() {
                       onChange={(e) =>
                         setNewPhoto({ ...newPhoto, date: e.target.value })
                       }
-                      className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                      className={`w-full p-2 rounded-lg transition-all duration-200 ${
+                        isDarkMode
+                          ? "bg-gray-700 border-gray-600 text-white focus:border-pink-500"
+                          : "border border-gray-200 focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                      }`}
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-gray-700 text-sm font-medium mb-2">
+                    <label
+                      className={`block text-sm font-medium mb-2 ${
+                        isDarkMode ? "text-gray-200" : "text-gray-700"
+                      }`}
+                    >
                       Local
                     </label>
                     <input
@@ -304,7 +356,11 @@ function Gallery() {
                       onChange={(e) =>
                         setNewPhoto({ ...newPhoto, location: e.target.value })
                       }
-                      className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                      className={`w-full p-2 rounded-lg transition-all duration-200 ${
+                        isDarkMode
+                          ? "bg-gray-700 border-gray-600 text-white focus:border-pink-500"
+                          : "border border-gray-200 focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                      }`}
                       required
                     />
                   </div>
@@ -330,14 +386,15 @@ function Gallery() {
           )}
         </AnimatePresence>
 
-        {/* Modal de visualização */}
         <AnimatePresence>
           {selectedPhoto && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/90 backdrop-blur-xl z-50 flex items-center justify-center"
+              className={`fixed inset-0 ${
+                isDarkMode ? "bg-black/95" : "bg-black/90"
+              } backdrop-blur-xl z-50 flex items-center justify-center`}
               onClick={() => setSelectedPhoto(null)}
             >
               <div className="container max-w-7xl mx-auto px-4 relative">
@@ -369,7 +426,6 @@ function Gallery() {
                     </div>
                   </div>
 
-                  {/* Botões de navegação */}
                   <button
                     onClick={handlePrev}
                     className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
@@ -383,7 +439,6 @@ function Gallery() {
                     <FaChevronRight size={24} />
                   </button>
 
-                  {/* Botão fechar */}
                   <button
                     onClick={() => setSelectedPhoto(null)}
                     className="absolute -top-12 right-0 p-2 text-white/80 hover:text-white transition-colors"

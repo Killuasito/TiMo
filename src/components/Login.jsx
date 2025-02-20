@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaLock, FaUser, FaHeart } from "react-icons/fa";
+import { useTheme } from "../context/ThemeContext";
 
 // Credenciais e dicas
 const CREDENTIALS = {
@@ -17,6 +18,7 @@ const HINTS = [
 ];
 
 function Login() {
+  const { isDarkMode } = useTheme();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -51,47 +53,86 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b pt-24 pb-12">
-      <div className="container mx-auto px-4">
+    <div
+      className={`min-h-screen flex items-center justify-center ${
+        isDarkMode
+          ? "bg-gray-900 text-gray-100"
+          : "bg-gradient-to-b from-pink-50 via-white to-pink-50"
+      }`}
+    >
+      <div className="w-full max-w-md px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-md mx-auto"
+          className="w-full"
         >
-          <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 w-full max-w-sm mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold text-center bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-6 md:mb-8">
+          <div
+            className={`${
+              isDarkMode ? "bg-gray-800 shadow-xl shadow-black/20" : "bg-white"
+            } rounded-2xl shadow-xl p-6 md:p-8 w-full max-w-sm mx-auto relative overflow-hidden`}
+          >
+            <h2
+              className={`text-2xl md:text-3xl font-bold text-center ${
+                isDarkMode
+                  ? "bg-gradient-to-r from-pink-400 to-purple-400"
+                  : "from-pink-600 to-purple-600"
+              } bg-clip-text text-transparent mb-6 md:mb-8`}
+            >
               Área Secreta
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
-              {/* Campos de formulário ajustados para toque */}
               <div>
-                <label className="block text-gray-700 text-sm font-medium mb-2">
+                <label
+                  className={`block text-sm font-medium mb-2 ${
+                    isDarkMode ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
                   Usuário
                 </label>
                 <div className="relative">
-                  <FaUser className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <FaUser
+                    className={`absolute left-3 top-1/2 -translate-y-1/2 ${
+                      isDarkMode ? "text-gray-500" : "text-gray-400"
+                    }`}
+                  />
                   <input
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 text-base border border-gray-200 rounded-lg"
+                    className={`w-full pl-10 pr-4 py-3 text-base rounded-lg ${
+                      isDarkMode
+                        ? "bg-gray-700 border-gray-600 text-gray-100"
+                        : "border border-gray-200"
+                    } focus:ring-2 focus:ring-pink-500 focus:border-transparent`}
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-gray-700 text-sm font-medium mb-2">
+                <label
+                  className={`block text-sm font-medium mb-2 ${
+                    isDarkMode ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
                   Senha
                 </label>
                 <div className="relative">
-                  <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <FaLock
+                    className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${
+                      isDarkMode ? "text-gray-500" : "text-gray-400"
+                    }`}
+                  />
                   <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 text-base border border-gray-200 rounded-lg"
+                    className={`w-full pl-10 pr-4 py-3 text-base rounded-lg ${
+                      isDarkMode
+                        ? "bg-gray-700 border-gray-600 text-gray-100"
+                        : "border border-gray-200"
+                    } focus:ring-2 focus:ring-pink-500 focus:border-transparent`}
                     required
                   />
                 </div>
@@ -102,7 +143,11 @@ function Login() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className={`text-sm text-center ${
-                    error.startsWith("Dica") ? "text-pink-600" : "text-red-500"
+                    error.startsWith("Dica")
+                      ? isDarkMode
+                        ? "text-pink-400"
+                        : "text-pink-600"
+                      : "text-red-500"
                   }`}
                 >
                   {error}
@@ -111,7 +156,7 @@ function Login() {
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300"
+                className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-3 rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300"
               >
                 Entrar
               </button>

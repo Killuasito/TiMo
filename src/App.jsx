@@ -15,33 +15,42 @@ import Wishlist from "./components/Wishlist";
 import Login from "./components/Login";
 import SecretLetter from "./components/SecretLetter";
 import ProtectedRoute from "./components/ProtectedRoute";
+import SpotifyCallback from "./components/SpotifyCallback";
+import { ThemeProvider } from "./context/ThemeContext";
+import ChatComponent from "./components/ChatComponent";
 
 function App() {
   return (
-    <Router>
-      <Navbar />
-      <main className="min-h-screen bg-gradient-to-br from-pink-100 to-purple-200">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/timer" element={<RelationshipTimer />} />
-          <Route path="/quiz" element={<Quiz />} />
-          <Route path="/gallery" element={<Gallery />} />
-          <Route path="/memories" element={<MemoriesWall />} />
-          <Route path="/music" element={<MusicPlayer />} />
-          <Route path="/wishlist" element={<Wishlist />} />
-          <Route path="/login" element={<Login />} />
-          <Route
-            path="/secret"
-            element={
-              <ProtectedRoute>
-                <SecretLetter />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </main>
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <div className="transition-all duration-500 ease-in-out">
+          <Navbar />
+          <main className="min-h-screen transition-all duration-500 ease-in-out bg-gradient-to-br from-pink-100 to-purple-200 dark:from-gray-800 dark:to-gray-900">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/timer" element={<RelationshipTimer />} />
+              <Route path="/quiz" element={<Quiz />} />
+              <Route path="/gallery" element={<Gallery />} />
+              <Route path="/memories" element={<MemoriesWall />} />
+              <Route path="/music" element={<MusicPlayer />} />
+              <Route path="/wishlist" element={<Wishlist />} />
+              <Route path="/login" element={<Login />} />
+              <Route
+                path="/secret"
+                element={
+                  <ProtectedRoute>
+                    <SecretLetter />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/callback" element={<SpotifyCallback />} />
+              <Route path="/chat" element={<ChatComponent />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </main>
+        </div>
+      </Router>
+    </ThemeProvider>
   );
 }
 

@@ -10,14 +10,18 @@ import {
   FaMusic,
   FaStar,
   FaLock,
+  FaComments,
 } from "react-icons/fa";
 import { IoMdImages } from "react-icons/io";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTheme } from "../context/ThemeContext";
+import { BsSun, BsMoon } from "react-icons/bs";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const { isDarkMode, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -75,6 +79,12 @@ function Navbar() {
       gradient: "from-yellow-500 to-orange-500",
     },
     {
+      path: "/chat",
+      label: "Chat",
+      icon: FaComments,
+      gradient: "from-green-500 to-teal-500",
+    },
+    {
       path: "/login",
       label: "Área Secreta",
       icon: FaLock,
@@ -90,13 +100,23 @@ function Navbar() {
     <>
       <nav
         className={`fixed w-full z-50 transition-all duration-500 ${
-          scrolled ? "bg-white/90 backdrop-blur-md shadow-lg" : "bg-white"
+          scrolled
+            ? isDarkMode
+              ? "bg-gray-900/90 backdrop-blur-md shadow-lg shadow-black/20"
+              : "bg-white/90 backdrop-blur-md shadow-lg"
+            : isDarkMode
+            ? "bg-gray-900"
+            : "bg-white"
         }`}
       >
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16 md:h-20">
             <Link to="/" className="text-xl md:text-2xl font-black">
-              <motion.span className="bg-gradient-to-r from-pink-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+              <motion.span
+                className={`bg-gradient-to-r from-pink-500 via-purple-500 to-pink-500 bg-clip-text text-transparent ${
+                  isDarkMode ? "brightness-125" : ""
+                }`}
+              >
                 Nossa História
               </motion.span>
             </Link>
@@ -113,14 +133,22 @@ function Navbar() {
                     <item.icon
                       className={`text-lg transition-colors duration-300 ${
                         isActive(item.path)
-                          ? "text-pink-600"
+                          ? isDarkMode
+                            ? "text-pink-400"
+                            : "text-pink-600"
+                          : isDarkMode
+                          ? "text-gray-400 group-hover:text-pink-400"
                           : "text-gray-600 group-hover:text-pink-600"
                       }`}
                     />
                     <span
                       className={`relative ${
                         isActive(item.path)
-                          ? "text-pink-600"
+                          ? isDarkMode
+                            ? "text-pink-400"
+                            : "text-pink-600"
+                          : isDarkMode
+                          ? "text-gray-400 group-hover:text-pink-400"
                           : "text-gray-600 group-hover:text-pink-600"
                       }`}
                     >
@@ -132,7 +160,13 @@ function Navbar() {
                   <div className="absolute inset-0 w-full h-full">
                     <div
                       className={`absolute inset-0 rounded-lg transition-all duration-300 opacity-0 group-hover:opacity-100 ${
-                        isActive(item.path) ? "bg-pink-50/80" : "bg-pink-50/50"
+                        isDarkMode
+                          ? isActive(item.path)
+                            ? "bg-pink-950/30"
+                            : "bg-gray-800/50"
+                          : isActive(item.path)
+                          ? "bg-pink-50/80"
+                          : "bg-pink-50/50"
                       }`}
                     />
                     <div
@@ -141,31 +175,62 @@ function Navbar() {
                   </div>
                 </Link>
               ))}
+              <button
+                onClick={toggleTheme}
+                className={`p-2 rounded-lg transition-colors ${
+                  isDarkMode ? "hover:bg-gray-800" : "hover:bg-gray-100"
+                }`}
+                title={
+                  isDarkMode
+                    ? "Mudar para tema claro"
+                    : "Mudar para tema escuro"
+                }
+              >
+                {isDarkMode ? (
+                  <BsSun className="text-yellow-400" size={20} />
+                ) : (
+                  <BsMoon className="text-gray-600" size={20} />
+                )}
+              </button>
             </div>
 
-            {/* Mobile Menu Button - Ajustado para melhor toque */}
+            {/* Mobile Menu Button - Melhorado */}
             <motion.button
               whileTap={{ scale: 0.95 }}
-              className="md:hidden p-3 rounded-lg hover:bg-pink-50"
+              className={`md:hidden p-3 rounded-lg ${
+                isDarkMode ? "hover:bg-gray-800" : "hover:bg-pink-50"
+              }`}
               onClick={() => setIsOpen(!isOpen)}
             >
               {isOpen ? (
-                <FaTimes className="w-6 h-6 text-pink-600" />
+                <FaTimes
+                  className={`w-6 h-6 ${
+                    isDarkMode ? "text-gray-300" : "text-pink-600"
+                  }`}
+                />
               ) : (
-                <FaBars className="w-6 h-6 text-gray-600" />
+                <FaBars
+                  className={`w-6 h-6 ${
+                    isDarkMode ? "text-gray-300" : "text-gray-600"
+                  }`}
+                />
               )}
             </motion.button>
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu - Melhorado */}
         <AnimatePresence>
           {isOpen && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-t border-gray-100 overflow-hidden bg-white"
+              className={`md:hidden ${
+                isDarkMode
+                  ? "bg-gray-900/95 border-t border-gray-800"
+                  : "bg-white border-t border-gray-100"
+              } backdrop-blur-lg`}
             >
               <div className="container mx-auto px-4 py-3 space-y-1">
                 {menuItems.map((item) => (
@@ -178,10 +243,14 @@ function Navbar() {
                     <Link
                       to={item.path}
                       onClick={() => setIsOpen(false)}
-                      className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                      className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 ${
                         isActive(item.path)
-                          ? "bg-pink-50 text-pink-600"
-                          : "hover:bg-gray-50 text-gray-600 hover:text-pink-600"
+                          ? isDarkMode
+                            ? "bg-gray-800 text-pink-400"
+                            : "bg-pink-50 text-pink-600"
+                          : isDarkMode
+                          ? "text-gray-300 hover:bg-gray-800 hover:text-pink-400"
+                          : "text-gray-600 hover:bg-gray-50 hover:text-pink-600"
                       }`}
                     >
                       <item.icon className="text-lg" />
@@ -189,13 +258,41 @@ function Navbar() {
                     </Link>
                   </motion.div>
                 ))}
+                <motion.div
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                >
+                  <button
+                    onClick={() => {
+                      toggleTheme();
+                      setIsOpen(false);
+                    }}
+                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 ${
+                      isDarkMode
+                        ? "text-gray-300 hover:bg-gray-800"
+                        : "text-gray-600 hover:bg-gray-50"
+                    }`}
+                  >
+                    {isDarkMode ? (
+                      <>
+                        <BsSun size={20} className="text-yellow-400" />
+                        <span className="font-medium">Modo Claro</span>
+                      </>
+                    ) : (
+                      <>
+                        <BsMoon size={20} />
+                        <span className="font-medium">Modo Escuro</span>
+                      </>
+                    )}
+                  </button>
+                </motion.div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </nav>
 
-      {/* Overlay for mobile menu */}
+      {/* Overlay para menu mobile */}
       <AnimatePresence>
         {isOpen && (
           <motion.div

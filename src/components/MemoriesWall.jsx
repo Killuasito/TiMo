@@ -14,6 +14,7 @@ import {
   FaSun,
   FaBookmark,
 } from "react-icons/fa";
+import { useTheme } from "../context/ThemeContext";
 
 // Mover initialMemories para um arquivo separado ou manter como fallback
 const defaultMemories = [
@@ -108,6 +109,7 @@ const memoryTypes = {
 };
 
 function MemoriesWall() {
+  const { isDarkMode } = useTheme();
   const [memories, setMemories] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newMemory, setNewMemory] = useState({
@@ -170,14 +172,26 @@ function MemoriesWall() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b pt-24 pb-12">
-      <div className="max-w-6xl mx-auto px-4">
+    <div
+      className={`min-h-screen ${
+        isDarkMode
+          ? "bg-gray-900 text-gray-100"
+          : "bg-gradient-to-b from-pink-50 via-white to-pink-50"
+      } pt-24 pb-12 transition-all duration-500`}
+    >
+      <div className="max-w-6xl mx-auto px-4 pt-18">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col md:flex-row justify-between items-center mb-12"
         >
-          <h2 className="text-4xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4 md:mb-0">
+          <h2
+            className={`text-4xl font-bold ${
+              isDarkMode
+                ? "text-transparent bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text"
+                : "bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent"
+            } mb-4 md:mb-0`}
+          >
             Mural de Memórias
           </h2>
           <button
@@ -191,7 +205,7 @@ function MemoriesWall() {
 
         {/* Grade de memórias */}
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
@@ -201,34 +215,64 @@ function MemoriesWall() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className={`${
-                memoryTypes[memory.type].color
-              } rounded-xl p-4 md:p-6 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 relative group`}
+              className={`rounded-2xl p-6 transition-all duration-300 relative group ${
+                isDarkMode
+                  ? "bg-gray-800/80 hover:bg-gray-700/80 shadow-lg shadow-black/20"
+                  : `${memoryTypes[memory.type].color} hover:shadow-2xl`
+              }`}
             >
-              {/* Conteúdo da memória */}
-              <div className="flex justify-between items-start mb-3 md:mb-4">
-                <div className="text-2xl md:text-3xl text-pink-500">
+              {/* Conteúdo principal */}
+              <div className="flex justify-between items-start mb-4">
+                <div
+                  className={`text-3xl ${
+                    isDarkMode ? "text-pink-400" : "text-pink-500"
+                  }`}
+                >
                   <memory.icon className="filter drop-shadow-md" />
                 </div>
-                <span className="text-xs md:text-sm font-medium text-gray-600 bg-white/70 backdrop-blur-sm px-2 md:px-3 py-1 rounded-full">
+                <span
+                  className={`text-sm font-medium px-3 py-1 rounded-full ${
+                    isDarkMode
+                      ? "bg-gray-700/70 text-gray-300"
+                      : "bg-white/70 text-gray-600"
+                  } backdrop-blur-sm`}
+                >
                   {new Date(memory.date).toLocaleDateString("pt-BR")}
                 </span>
               </div>
-              <h3 className="text-lg md:text-xl font-bold text-gray-800 mb-2 md:mb-3">
+              <h3
+                className={`text-xl font-bold mb-3 ${
+                  isDarkMode ? "text-gray-100" : "text-gray-800"
+                }`}
+              >
                 {memory.title}
               </h3>
-              <p className="text-sm md:text-base text-gray-600 leading-relaxed mb-4">
+              <p
+                className={`leading-relaxed mb-4 ${
+                  isDarkMode ? "text-gray-400" : "text-gray-600"
+                }`}
+              >
                 {memory.description}
               </p>
               <div className="flex items-center justify-between">
-                <span className="inline-block bg-white/80 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm font-medium text-gray-700 shadow-sm">
+                <span
+                  className={`inline-block px-4 py-1.5 rounded-full text-sm font-medium ${
+                    isDarkMode
+                      ? "bg-gray-700/70 text-gray-300"
+                      : "bg-white/80 text-gray-700"
+                  } backdrop-blur-sm shadow-sm`}
+                >
                   {memoryTypes[memory.type].label}
                 </span>
 
                 {/* Botão de excluir reposicionado */}
                 <button
                   onClick={() => handleDeleteMemory(memory.id)}
-                  className="opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110 bg-white/80 backdrop-blur-sm p-2 rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50"
+                  className={`p-2 rounded-full transition-all duration-200 ${
+                    isDarkMode
+                      ? "bg-gray-700/70 text-gray-400 hover:text-red-400 hover:bg-gray-600/70"
+                      : "bg-white/80 text-gray-400 hover:text-red-500 hover:bg-red-50"
+                  }`}
                   title="Excluir memória"
                 >
                   <FaTimes size={16} />
@@ -252,16 +296,26 @@ function MemoriesWall() {
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
-                className="bg-white rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl"
+                className={`${
+                  isDarkMode ? "bg-gray-800" : "bg-white"
+                } rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl`}
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+                  <h3
+                    className={`text-xl font-bold ${
+                      isDarkMode
+                        ? "text-gray-100"
+                        : "bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent"
+                    }`}
+                  >
                     Nova Memória
                   </h3>
                   <button
                     onClick={() => setShowAddForm(false)}
-                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                    className={`text-gray-400 hover:${
+                      isDarkMode ? "text-gray-200" : "text-gray-600"
+                    } transition-colors`}
                   >
                     <FaTimes size={18} />
                   </button>
@@ -280,7 +334,11 @@ function MemoriesWall() {
                         onChange={(e) =>
                           setNewMemory({ ...newMemory, date: e.target.value })
                         }
-                        className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
+                        className={`w-full p-2 rounded-lg transition-all duration-200 ${
+                          isDarkMode
+                            ? "bg-gray-700 border-gray-600 text-gray-100 focus:border-pink-500"
+                            : "border border-gray-200 focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                        }`}
                         required
                       />
                     </div>
@@ -296,7 +354,11 @@ function MemoriesWall() {
                         onChange={(e) =>
                           setNewMemory({ ...newMemory, title: e.target.value })
                         }
-                        className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
+                        className={`w-full p-2 rounded-lg transition-all duration-200 ${
+                          isDarkMode
+                            ? "bg-gray-700 border-gray-600 text-gray-100 focus:border-pink-500"
+                            : "border border-gray-200 focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                        }`}
                         required
                       />
                     </div>
@@ -314,7 +376,11 @@ function MemoriesWall() {
                             description: e.target.value,
                           })
                         }
-                        className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300 min-h-[80px] text-sm"
+                        className={`w-full p-2 rounded-lg transition-all duration-200 ${
+                          isDarkMode
+                            ? "bg-gray-700 border-gray-600 text-gray-100 focus:border-pink-500"
+                            : "border border-gray-200 focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                        } min-h-[80px] text-sm`}
                         required
                       />
                     </div>
@@ -329,7 +395,11 @@ function MemoriesWall() {
                         onChange={(e) =>
                           setNewMemory({ ...newMemory, type: e.target.value })
                         }
-                        className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
+                        className={`w-full p-2 rounded-lg transition-all duration-200 ${
+                          isDarkMode
+                            ? "bg-gray-700 border-gray-600 text-gray-100 focus:border-pink-500"
+                            : "border border-gray-200 focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                        }`}
                       >
                         {Object.entries(memoryTypes).map(([key, { label }]) => (
                           <option key={key} value={key}>
@@ -370,7 +440,9 @@ function MemoriesWall() {
                     <button
                       type="button"
                       onClick={() => setShowAddForm(false)}
-                      className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 font-medium transition-colors"
+                      className={`px-4 py-2 text-sm ${
+                        isDarkMode ? "text-gray-400" : "text-gray-600"
+                      } hover:text-gray-800 font-medium`}
                     >
                       Cancelar
                     </button>

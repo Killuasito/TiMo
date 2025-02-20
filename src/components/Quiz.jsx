@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaHeart, FaCheck, FaTimes, FaRedo } from "react-icons/fa";
+import { FaHeart, FaCheck, FaTimes, FaRedo, FaPlus } from "react-icons/fa";
+import { useTheme } from "../context/ThemeContext";
+import CreateQuizForm from "./CreateQuizForm";
 
 const questions = [
   {
@@ -121,25 +123,65 @@ const questions = [
 ];
 
 function Quiz() {
+  const { isDarkMode } = useTheme();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [isAnswered, setIsAnswered] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [customQuestions, setCustomQuestions] = useState(() => {
+    const saved = localStorage.getItem("customQuestions");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [quizzes, setQuizzes] = useState([
+    { id: "default", title: "Quiz do Amor", questions },
+  ]);
+  const [selectedQuizId, setSelectedQuizId] = useState("default");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchQuizzes = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/quizzes`
+        );
+        if (!response.ok) throw new Error("Erro ao carregar quizzes");
+        const data = await response.json();
+        setQuizzes((prev) => [prev[0], ...data]); // Mantém o quiz padrão e adiciona os do servidor
+      } catch (error) {
+        console.warn("Usando apenas quiz local devido a erro:", error);
+        // Mantem apenas o quiz padrão em caso de erro
+        setQuizzes((prev) => [prev[0]]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchQuizzes().catch(() => {
+      setIsLoading(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("customQuestions", JSON.stringify(customQuestions));
+  }, [customQuestions]);
 
   const handleAnswer = (selectedOption) => {
     setSelectedAnswer(selectedOption);
     setIsAnswered(true);
 
     setTimeout(() => {
-      if (selectedOption === questions[currentQuestion].correct) {
+      if (selectedOption === allQuestions[currentQuestion].correct) {
         setScore(score + 1);
       }
 
       setSelectedAnswer(null);
       setIsAnswered(false);
 
-      if (currentQuestion + 1 < questions.length) {
+      if (currentQuestion + 1 < allQuestions.length) {
         setCurrentQuestion(currentQuestion + 1);
       } else {
         setShowResult(true);
@@ -155,21 +197,162 @@ function Quiz() {
     setIsAnswered(false);
   };
 
+  const handleAddQuestion = (newQuestion) => {
+    setCustomQuestions((prev) => [...prev, newQuestion]);
+  };
+
+  const handleAddQuiz = async (newQuiz) => {
+    try {
+      if (
+        !newQuiz.title ||
+        !newQuiz.questions ||
+        newQuiz.questions.length === 0
+      ) {
+        throw new Error("Dados do quiz incompletos");
+      }
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/quizzes`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newQuiz),
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Erro ao salvar quiz no servidor");
+      }
+
+      const savedQuiz = await response.json();
+      setQuizzes((prev) => [...prev, savedQuiz]);
+      setShowAddForm(false);
+      setSelectedQuizId(savedQuiz._id);
+      resetQuiz();
+      alert("Quiz criado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao processar quiz:", error);
+      alert(`Erro ao salvar quiz: ${error.message}`);
+    }
+  };
+
+  const handleDeleteQuiz = async (quizId) => {
+    if (!quizId || quizId === "default") {
+      alert("Não é possível excluir o quiz padrão");
+      return;
+    }
+
+    if (!/^[0-9a-fA-F]{24}$/.test(quizId)) {
+      alert("ID inválido: Este quiz não pode ser excluído");
+      return;
+    }
+
+    if (!window.confirm("Tem certeza que deseja excluir este quiz?")) return;
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/quizzes/${quizId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.message || "Erro ao deletar quiz do servidor"
+        );
+      }
+
+      const result = await response.json();
+      setQuizzes((prev) =>
+        prev.filter((quiz) => quiz._id !== quizId && quiz.id !== quizId)
+      );
+
+      if (selectedQuizId === quizId) {
+        setSelectedQuizId("default");
+        resetQuiz();
+      }
+
+      alert("Quiz excluído com sucesso!");
+    } catch (error) {
+      console.error("Erro ao deletar quiz:", error);
+      alert(`Erro ao excluir quiz: ${error.message}`);
+    }
+  };
+
+  const currentQuiz =
+    quizzes.find((quiz) => quiz.id === selectedQuizId) || quizzes[0];
+  const allQuestions = currentQuiz.questions;
+
   return (
-    <div className="min-h-screen bg-gradient-to-b pt-20 pb-12">
-      <div className="max-w-3xl mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8 md:mb-12"
-        >
-          <h1 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4">
-            Quiz do Amor
-          </h1>
-          <p className="text-gray-600 text-base md:text-lg">
-            Teste seus conhecimentos sobre nossa história
-          </p>
-        </motion.div>
+    <div
+      className={`min-h-screen pt-20 pb-12 ${
+        isDarkMode
+          ? "bg-gray-900 text-gray-100"
+          : "bg-gradient-to-b from-pink-50 via-white to-pink-50"
+      }`}
+    >
+      <div className="max-w-3xl mx-auto px-4 pt-24">
+        {/* Adicionar seletor de quiz */}
+        <div className="flex justify-between items-center mb-8">
+          <div className="flex flex-col gap-4">
+            <h1
+              className={`text-3xl md:text-5xl font-bold ${
+                isDarkMode
+                  ? "text-transparent bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text"
+                  : "bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent"
+              }`}
+            >
+              {currentQuiz.title}
+            </h1>
+
+            <select
+              value={selectedQuizId}
+              onChange={(e) => {
+                setSelectedQuizId(e.target.value);
+                resetQuiz();
+              }}
+              className={`px-4 py-2 rounded-lg ${
+                isDarkMode
+                  ? "bg-gray-800 text-gray-200 border-gray-700"
+                  : "bg-white border-gray-200"
+              } border`}
+            >
+              {quizzes.map((quiz) => {
+                const uniqueKey = quiz._id || quiz.id;
+                return (
+                  <option key={uniqueKey} value={quiz._id || quiz.id}>
+                    {quiz.title} {quiz.id !== "default" && "(Personalizado)"}
+                  </option>
+                );
+              })}
+            </select>
+
+            {selectedQuizId !== "default" && (
+              <button
+                onClick={() => handleDeleteQuiz(selectedQuizId)}
+                className="text-red-500 hover:text-red-700 text-sm"
+              >
+                Deletar Quiz Atual
+              </button>
+            )}
+          </div>
+
+          <button
+            onClick={() => setShowAddForm(true)}
+            className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-full"
+          >
+            <FaPlus size={14} />
+            <span>Novo Quiz</span>
+          </button>
+        </div>
 
         <AnimatePresence mode="wait">
           {!showResult ? (
@@ -178,35 +361,57 @@ function Quiz() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="bg-white rounded-2xl shadow-xl p-8 mb-8"
+              className={`${
+                isDarkMode
+                  ? "bg-gray-800 shadow-xl shadow-black/20"
+                  : "bg-white"
+              } rounded-2xl shadow-xl p-8 mb-8`}
             >
               {/* Progress Bar */}
-              <div className="w-full h-2 bg-gray-100 rounded-full mb-4 md:mb-8">
+              <div
+                className={`w-full h-2 ${
+                  isDarkMode ? "bg-gray-700" : "bg-gray-100"
+                } rounded-full mb-4 md:mb-8`}
+              >
                 <div
                   className="h-full bg-gradient-to-r from-pink-500 to-purple-600 rounded-full transition-all duration-300"
                   style={{
                     width: `${
-                      ((currentQuestion + 1) / questions.length) * 100
+                      ((currentQuestion + 1) / allQuestions.length) * 100
                     }%`,
                   }}
                 />
               </div>
 
               <div className="flex items-center justify-between mb-4 md:mb-8">
-                <span className="text-xs md:text-sm font-medium text-gray-500">
-                  Pergunta {currentQuestion + 1} de {questions.length}
+                <span
+                  className={`text-xs md:text-sm font-medium ${
+                    isDarkMode ? "text-gray-400" : "text-gray-500"
+                  }`}
+                >
+                  Pergunta {currentQuestion + 1} de {allQuestions.length}
                 </span>
-                <span className="bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-sm font-medium">
+                <span
+                  className={`${
+                    isDarkMode
+                      ? "bg-pink-900/30 text-pink-400"
+                      : "bg-pink-100 text-pink-600"
+                  } px-3 py-1 rounded-full text-sm font-medium`}
+                >
                   Pontuação: {score}
                 </span>
               </div>
 
-              <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-6">
-                {questions[currentQuestion].question}
+              <h2
+                className={`text-xl md:text-2xl font-bold ${
+                  isDarkMode ? "text-gray-100" : "text-gray-800"
+                } mb-6`}
+              >
+                {allQuestions[currentQuestion].question}
               </h2>
 
               <div className="space-y-4">
-                {questions[currentQuestion].options.map((option, index) => (
+                {allQuestions[currentQuestion].options.map((option, index) => (
                   <button
                     key={index}
                     onClick={() => !isAnswered && handleAnswer(index)}
@@ -214,21 +419,37 @@ function Quiz() {
                     className={`w-full p-3 md:p-4 text-left rounded-xl transition-all duration-300 text-sm md:text-base flex items-center group relative overflow-hidden
                       ${
                         isAnswered
-                          ? index === questions[currentQuestion].correct
-                            ? "bg-green-50 text-green-700"
+                          ? index === allQuestions[currentQuestion].correct
+                            ? isDarkMode
+                              ? "bg-green-900/30 text-green-400"
+                              : "bg-green-50 text-green-700"
                             : index === selectedAnswer
-                            ? "bg-red-50 text-red-700"
+                            ? isDarkMode
+                              ? "bg-red-900/30 text-red-400"
+                              : "bg-red-50 text-red-700"
+                            : isDarkMode
+                            ? "bg-gray-700/50 text-gray-400"
                             : "bg-gray-50 text-gray-500"
+                          : isDarkMode
+                          ? "bg-gray-700/50 hover:bg-gray-600/50 text-gray-300"
                           : "bg-white hover:bg-pink-50 text-gray-700 hover:text-pink-600"
                       }
                       border-2
                       ${
                         isAnswered
-                          ? index === questions[currentQuestion].correct
-                            ? "border-green-200"
+                          ? index === allQuestions[currentQuestion].correct
+                            ? isDarkMode
+                              ? "border-green-800"
+                              : "border-green-200"
                             : index === selectedAnswer
-                            ? "border-red-200"
+                            ? isDarkMode
+                              ? "border-red-800"
+                              : "border-red-200"
+                            : isDarkMode
+                            ? "border-gray-600"
                             : "border-gray-100"
+                          : isDarkMode
+                          ? "border-gray-600 hover:border-gray-500"
                           : "border-gray-100 hover:border-pink-200"
                       }
                     `}
@@ -236,7 +457,7 @@ function Quiz() {
                     <span className="relative z-10 flex-1">{option}</span>
                     {isAnswered && (
                       <span className="relative z-10">
-                        {index === questions[currentQuestion].correct ? (
+                        {index === allQuestions[currentQuestion].correct ? (
                           <FaCheck className="text-green-500" />
                         ) : index === selectedAnswer ? (
                           <FaTimes className="text-red-500" />
@@ -253,7 +474,11 @@ function Quiz() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-2xl shadow-xl p-8 text-center"
+              className={`${
+                isDarkMode
+                  ? "bg-gray-800 shadow-xl shadow-black/20"
+                  : "bg-white"
+              } rounded-2xl shadow-xl p-8 text-center`}
             >
               <div className="mb-8">
                 <FaHeart className="text-6xl text-pink-500 mx-auto mb-6" />
@@ -261,12 +486,12 @@ function Quiz() {
                   Resultado Final
                 </h2>
                 <p className="text-xl text-gray-600 mb-4">
-                  Você acertou {score} de {questions.length} perguntas!
+                  Você acertou {score} de {allQuestions.length} perguntas!
                 </p>
                 <div className="w-full h-4 bg-gray-100 rounded-full mb-6">
                   <div
                     className="h-full bg-gradient-to-r from-pink-500 to-purple-600 rounded-full transition-all duration-1000"
-                    style={{ width: `${(score / questions.length) * 100}%` }}
+                    style={{ width: `${(score / allQuestions.length) * 100}%` }}
                   />
                 </div>
               </div>
@@ -282,6 +507,15 @@ function Quiz() {
           )}
         </AnimatePresence>
       </div>
+
+      <AnimatePresence>
+        {showAddForm && (
+          <CreateQuizForm
+            onClose={() => setShowAddForm(false)}
+            onSave={handleAddQuiz}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
