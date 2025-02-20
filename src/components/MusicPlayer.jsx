@@ -200,9 +200,9 @@ function MusicPlayer() {
   }, [isDarkMode]);
 
   useEffect(() => {
-    // Verificar se já temos o token na URL (após login)
-    const hash = window.location.hash;
-    if (hash) {
+    const token = localStorage.getItem("spotify_token");
+    if (!token && window.location.hash) {
+      const hash = window.location.hash;
       const token = hash
         .substring(1)
         .split("&")

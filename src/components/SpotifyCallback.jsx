@@ -5,24 +5,32 @@ function SpotifyCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const hash = window.location.hash;
-    if (hash) {
-      const token = hash
-        .substring(1)
-        .split("&")
-        .find((elem) => elem.startsWith("access_token"))
-        ?.split("=")[1];
+    const handleCallback = () => {
+      const hash = window.location.hash;
+      try {
+        if (hash) {
+          const params = new URLSearchParams(hash.substring(1));
+          const token = params.get("access_token");
 
-      if (token) {
-        localStorage.setItem("spotify_token", token);
-        navigate("/music");
-      } else {
-        console.error("No token found in URL");
-        navigate("/music?error=no_token");
+          if (token) {
+            localStorage.setItem("spotify_token", token);
+            navigate("/music", { replace: true });
+          } else {
+            throw new Error("No token found");
+          }
+        } else {
+          throw new Error("No hash found");
+        }
+      } catch (error) {
+        console.error("Auth error:", error);
+        navigate("/music", {
+          replace: true,
+          state: { error: error.message },
+        });
       }
-    } else {
-      navigate("/music?error=no_hash");
-    }
+    };
+
+    handleCallback();
   }, [navigate]);
 
   return (
