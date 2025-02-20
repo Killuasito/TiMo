@@ -301,14 +301,14 @@ const PetComponent = () => {
   }, [stats, happiness, cleanliness]);
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
+    <div className="fixed bottom-4 left-4 z-50 md:right-4 md:left-auto">
       <AnimatePresence>
         {showStats && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className={`absolute bottom-full right-0 mb-2 p-4 rounded-lg shadow-lg
+            className={`absolute bottom-full left-0 md:left-auto md:right-0 mb-2 p-4 rounded-lg shadow-lg
               ${isSleeping ? "bg-gray-800/95" : "bg-gray-900/95"} 
               text-white backdrop-blur-sm w-64`}
           >
