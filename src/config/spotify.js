@@ -1,6 +1,6 @@
 export const spotifyConfig = {
   clientId: import.meta.env.VITE_SPOTIFY_CLIENT_ID,
-  redirectUri: "https://timo-six.vercel.app/music",
+  redirectUri: "https://timo-six.vercel.app/callback",
   scopes: [
     "streaming",
     "user-read-email",

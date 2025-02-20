@@ -18,6 +18,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { ThemeProvider } from "./context/ThemeContext";
 import ChatComponent from "./components/ChatComponent";
 import PetWrapper from "./components/PetWrapper";
+import SpotifyCallback from "./components/SpotifyCallback";
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
                   </div>
                 }
               />
+              <Route path="/callback" element={<SpotifyCallback />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
