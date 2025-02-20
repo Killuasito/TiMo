@@ -6,18 +6,16 @@ function SpotifyCallback() {
 
   useEffect(() => {
     const handleCallback = () => {
-      // Extrai o token do hash da URL
       const hash = window.location.hash.substring(1);
       const params = new URLSearchParams(hash);
       const accessToken = params.get("access_token");
+      const expiresIn = params.get("expires_in");
 
       if (accessToken) {
-        // Salva o token no localStorage
         localStorage.setItem("spotify_token", accessToken);
-        // Redireciona para a página de música
+        localStorage.setItem("spotify_token_expires_in", expiresIn);
         navigate("/music");
       } else {
-        // Se não houver token, redireciona para a página inicial
         navigate("/");
       }
     };

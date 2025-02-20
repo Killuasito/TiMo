@@ -209,26 +209,10 @@ function MusicPlayer() {
 
   useEffect(() => {
     if (accessToken && playlist[currentTrack]) {
-      fetchTrackUrl(playlist[currentTrack].id);
+      const embedUrl = `https://open.spotify.com/embed/track/${playlist[currentTrack].id}?utm_source=generator&theme=0`;
+      setCurrentTrackUrl(embedUrl);
     }
-  }, [accessToken, currentTrack]);
-
-  const fetchTrackUrl = async (trackId) => {
-    try {
-      const response = await fetch(
-        `https://api.spotify.com/v1/tracks/${trackId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-      const data = await response.json();
-      setCurrentTrackUrl(data.preview_url || playlist[currentTrack].embedUrl);
-    } catch (error) {
-      console.error("Erro ao buscar URL da música:", error);
-    }
-  };
+  }, [accessToken, currentTrack, playlist]);
 
   const handleAddTrack = (e) => {
     e.preventDefault();
