@@ -16,7 +16,6 @@ import {
 import { BsEmojiSmile, BsThreeDotsVertical } from "react-icons/bs";
 import EmojiPicker from "emoji-picker-react";
 import { HexColorPicker } from "react-colorful";
-import PetComponent from "./PetComponent";
 
 function ChatComponent() {
   const { isDarkMode } = useTheme();
@@ -327,7 +326,6 @@ function ChatComponent() {
         isDarkMode ? "bg-gray-900" : "bg-gray-50"
       }`}
     >
-      <PetComponent />
       <div
         className={`flex flex-col h-[600px] max-w-2xl mx-auto rounded-xl overflow-hidden
         ${

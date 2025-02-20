@@ -18,6 +18,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import SpotifyCallback from "./components/SpotifyCallback";
 import { ThemeProvider } from "./context/ThemeContext";
 import ChatComponent from "./components/ChatComponent";
+import PetWrapper from "./components/PetWrapper";
 
 function App() {
   return (
@@ -25,7 +26,7 @@ function App() {
       <Router>
         <div className="transition-all duration-500 ease-in-out">
           <Navbar />
-          <main className="min-h-screen transition-all duration-500 ease-in-out bg-gradient-to-br from-pink-100 to-purple-200 dark:from-gray-800 dark:to-gray-900">
+          <main className="relative z-10 min-h-screen transition-all duration-500 ease-in-out bg-gradient-to-br from-pink-100 to-purple-200 dark:from-gray-800 dark:to-gray-900">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/timer" element={<RelationshipTimer />} />
@@ -45,9 +46,18 @@ function App() {
               />
               <Route path="/callback" element={<SpotifyCallback />} />
               <Route path="/chat" element={<ChatComponent />} />
+              <Route
+                path="/pet"
+                element={
+                  <div className="container mx-auto px-4 pt-24">
+                    <PetWrapper />
+                  </div>
+                }
+              />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
+          <PetWrapper />
         </div>
       </Router>
     </ThemeProvider>

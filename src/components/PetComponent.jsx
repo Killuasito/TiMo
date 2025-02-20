@@ -13,8 +13,10 @@ import { GiWaterDrop, GiCat, GiPartyPopper } from "react-icons/gi";
 import { MdPets, MdToys } from "react-icons/md";
 import { RiHeartsFill, RiMoonClearFill } from "react-icons/ri";
 import { BiBone, BiRestaurant } from "react-icons/bi";
+import { useTheme } from "../context/ThemeContext";
 
 const PetComponent = () => {
+  const { isDarkMode } = useTheme();
   const [stats, setStats] = useState({
     health: 100,
     hunger: 100,
@@ -301,128 +303,15 @@ const PetComponent = () => {
   }, [stats, happiness, cleanliness]);
 
   return (
-    <div className="fixed bottom-24 md:bottom-4 left-4 z-40 md:right-4 md:left-auto">
-      <AnimatePresence>
-        {showStats && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            className={`absolute bottom-full left-0 md:left-auto md:right-0 mb-2 p-4 rounded-lg shadow-lg
-              ${isSleeping ? "bg-gray-800/95" : "bg-gray-900/95"} 
-              text-white backdrop-blur-sm w-64 max-h-[80vh] overflow-y-auto`}
-          >
-            <div className="space-y-3">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <GiCat className="text-xl text-amber-500" />
-                  <div>
-                    <h3 className="font-bold text-amber-400">{petName}</h3>
-                    <div className="text-xs text-gray-300">
-                      Personalidade: {personality}
-                    </div>
-                  </div>
-                </div>
-                <div className="text-xs bg-amber-500/20 px-2 py-1 rounded-full">
-                  Nível {level}
-                </div>
-              </div>
-
-              {/* Mood Message */}
-              {moodMessage && (
-                <div className="text-sm text-center bg-gray-800/50 p-2 rounded-lg">
-                  {moodMessage}
-                </div>
-              )}
-
-              <div className="flex items-center gap-2">
-                <FaHeart className="text-red-500" />
-                <StatBar value={stats.health} color="bg-red-500" />
-              </div>
-              <div className="flex items-center gap-2">
-                <FaUtensils className="text-yellow-500" />
-                <StatBar value={stats.hunger} color="bg-yellow-500" />
-              </div>
-              <div className="flex items-center gap-2">
-                <GiWaterDrop className="text-blue-500" />
-                <StatBar value={stats.hydration} color="bg-blue-500" />
-              </div>
-              <div className="flex items-center gap-2">
-                <FaMoon className="text-purple-500" />
-                <StatBar value={stats.energy} color="bg-purple-500" />
-              </div>
-              <div className="flex items-center gap-2">
-                <FaShower className="text-blue-300" />
-                <StatBar value={cleanliness} color="bg-blue-300" />
-              </div>
-              <div className="flex items-center gap-2">
-                <GiPartyPopper className="text-pink-400" />
-                <StatBar value={happiness} color="bg-pink-400" />
-              </div>
-              <div className="mt-4">
-                <h4 className="text-sm font-medium mb-2">Brinquedos</h4>
-                <div className="flex gap-2">
-                  {toys.map((toy) => (
-                    <button
-                      key={toy.id}
-                      onClick={() => play(toy.id)}
-                      className={`p-2 rounded-lg ${
-                        toy.used ? "opacity-50" : "hover:bg-gray-700"
-                      }`}
-                      disabled={toy.used || isSleeping}
-                    >
-                      {toy.icon}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="mt-4">
-                <h4 className="text-sm font-medium mb-2">Conquistas</h4>
-                <div className="flex gap-2">
-                  {achievements.map((achievement) => (
-                    <div
-                      key={achievement.id}
-                      className={`p-2 rounded-lg ${
-                        achievement.unlocked
-                          ? "bg-yellow-500/20"
-                          : "bg-gray-700/20"
-                      }`}
-                      title={achievement.name}
-                    >
-                      {achievement.icon}
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="mt-4 space-y-1 text-xs opacity-80">
-                {activities.map((activity, index) => (
-                  <div key={index}>{activity}</div>
-                ))}
-              </div>
-              <div className="mt-4">
-                <h4 className="text-sm font-medium mb-2">Alimentação</h4>
-                <div className="flex gap-2 flex-wrap">
-                  {foods.map((food) => (
-                    <button
-                      key={food.id}
-                      onClick={() => feedWithFood(food)}
-                      className="p-2 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors"
-                      disabled={isSleeping}
-                    >
-                      <div className="text-center">
-                        <span className="text-xl">{food.icon}</span>
-                        <div className="text-xs mt-1">{food.name}</div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="flex gap-2">
+    <div
+      className={`relative ${
+        isDarkMode ? "bg-gray-800/20" : "bg-white/20"
+      } backdrop-blur-sm p-4 rounded-xl border ${
+        isDarkMode ? "border-gray-700/50" : "border-gray-200/50"
+      }`}
+    >
+      {/* Controls primeiro */}
+      <div className="flex gap-2 justify-center">
         {!isSleeping && (
           <>
             <button
@@ -480,6 +369,172 @@ const PetComponent = () => {
           <FaMoon />
         </button>
       </div>
+
+      {/* Stats Panel */}
+      <AnimatePresence>
+        {showStats && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 rounded-lg shadow-lg
+              ${isDarkMode ? "bg-gray-800/95" : "bg-white/95"} 
+              ${isDarkMode ? "text-white" : "text-gray-800"}
+              border ${isDarkMode ? "border-gray-700" : "border-gray-200"}
+              backdrop-blur-sm w-[calc(100vw-2rem)] md:w-96 max-h-[60vh] overflow-y-auto
+              scrollbar-thin ${
+                isDarkMode
+                  ? "scrollbar-thumb-gray-600"
+                  : "scrollbar-thumb-gray-400"
+              } scrollbar-track-transparent`}
+          >
+            {/* Stats content */}
+            <div className="p-4 space-y-3">
+              {/* Pet Info Header - Sticky */}
+              <div
+                className={`sticky top-0 z-10 bg-inherit pb-2 mb-2 border-b ${
+                  isDarkMode ? "border-gray-700" : "border-gray-200"
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <GiCat className="text-xl text-amber-500" />
+                    <div>
+                      <h3 className="font-bold text-amber-400">{petName}</h3>
+                      <div className="text-xs text-gray-300">
+                        Personalidade: {personality}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-xs bg-amber-500/20 px-2 py-1 rounded-full">
+                    Nível {level}
+                  </div>
+                </div>
+                {/* Mood Message */}
+                {moodMessage && (
+                  <div
+                    className={`text-sm text-center ${
+                      isDarkMode ? "bg-gray-700/50" : "bg-gray-100/50"
+                    } p-2 mt-2 rounded-lg`}
+                  >
+                    {moodMessage}
+                  </div>
+                )}
+              </div>
+
+              {/* Rest of the content */}
+              <div className="flex items-center gap-2">
+                <FaHeart className="text-red-500" />
+                <StatBar value={stats.health} color="bg-red-500" />
+              </div>
+              <div className="flex items-center gap-2">
+                <FaUtensils className="text-yellow-500" />
+                <StatBar value={stats.hunger} color="bg-yellow-500" />
+              </div>
+              <div className="flex items-center gap-2">
+                <GiWaterDrop className="text-blue-500" />
+                <StatBar value={stats.hydration} color="bg-blue-500" />
+              </div>
+              <div className="flex items-center gap-2">
+                <FaMoon className="text-purple-500" />
+                <StatBar value={stats.energy} color="bg-purple-500" />
+              </div>
+              <div className="flex items-center gap-2">
+                <FaShower className="text-blue-300" />
+                <StatBar value={cleanliness} color="bg-blue-300" />
+              </div>
+              <div className="flex items-center gap-2">
+                <GiPartyPopper className="text-pink-400" />
+                <StatBar value={happiness} color="bg-pink-400" />
+              </div>
+              <div className="mt-4">
+                <h4
+                  className={`text-sm font-medium mb-2 ${
+                    isDarkMode ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
+                  Brinquedos
+                </h4>
+                <div className="flex gap-2">
+                  {toys.map((toy) => (
+                    <button
+                      key={toy.id}
+                      onClick={() => play(toy.id)}
+                      className={`p-2 rounded-lg ${
+                        toy.used ? "opacity-50" : "hover:bg-gray-700"
+                      }`}
+                      disabled={toy.used || isSleeping}
+                    >
+                      {toy.icon}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="mt-4">
+                <h4
+                  className={`text-sm font-medium mb-2 ${
+                    isDarkMode ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
+                  Conquistas
+                </h4>
+                <div className="flex gap-2">
+                  {achievements.map((achievement) => (
+                    <div
+                      key={achievement.id}
+                      className={`p-2 rounded-lg ${
+                        achievement.unlocked
+                          ? "bg-yellow-500/20"
+                          : "bg-gray-700/20"
+                      }`}
+                      title={achievement.name}
+                    >
+                      {achievement.icon}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div
+                className={`mt-4 space-y-1 text-xs ${
+                  isDarkMode ? "opacity-80" : "opacity-70"
+                }`}
+              >
+                {activities.map((activity, index) => (
+                  <div key={index}>{activity}</div>
+                ))}
+              </div>
+              <div className="mt-4">
+                <h4
+                  className={`text-sm font-medium mb-2 ${
+                    isDarkMode ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
+                  Alimentação
+                </h4>
+                <div className="flex gap-2 flex-wrap">
+                  {foods.map((food) => (
+                    <button
+                      key={food.id}
+                      onClick={() => feedWithFood(food)}
+                      className={`p-2 rounded-lg transition-colors ${
+                        isDarkMode
+                          ? "bg-gray-700/50 hover:bg-gray-600/50"
+                          : "bg-gray-100/50 hover:bg-gray-200/50"
+                      }`}
+                      disabled={isSleeping}
+                    >
+                      <div className="text-center">
+                        <span className="text-xl">{food.icon}</span>
+                        <div className="text-xs mt-1">{food.name}</div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

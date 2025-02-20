@@ -16,6 +16,7 @@ import { IoMdImages } from "react-icons/io";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "../context/ThemeContext";
 import { BsSun, BsMoon } from "react-icons/bs";
+import { GiCat } from "react-icons/gi"; // Add this import
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -89,6 +90,12 @@ function Navbar() {
       label: "Área Secreta",
       icon: FaLock,
       gradient: "from-gray-500 to-gray-700",
+    },
+    {
+      path: "/pet",
+      label: "Pet Virtual",
+      icon: GiCat,
+      gradient: "from-amber-500 to-orange-500",
     },
   ];
 
