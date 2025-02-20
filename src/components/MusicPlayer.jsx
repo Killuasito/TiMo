@@ -200,30 +200,10 @@ function MusicPlayer() {
   }, [isDarkMode]);
 
   useEffect(() => {
-    // Handle token from URL hash
-    const handleToken = () => {
-      const hash = window.location.hash;
-      if (hash) {
-        const token = hash
-          .substring(1)
-          .split("&")
-          .find((elem) => elem.startsWith("access_token"))
-          ?.split("=")[1];
-
-        if (token) {
-          localStorage.setItem("spotify_token", token);
-          setAccessToken(token);
-          // Clean the URL without reloading the page
-          window.history.replaceState(
-            {},
-            document.title,
-            window.location.pathname
-          );
-        }
-      }
-    };
-
-    handleToken();
+    const token = localStorage.getItem("spotify_token");
+    if (token) {
+      setAccessToken(token);
+    }
   }, []);
 
   const handleAddTrack = (e) => {
