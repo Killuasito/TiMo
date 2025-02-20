@@ -13,10 +13,8 @@ import { GiWaterDrop, GiCat, GiPartyPopper } from "react-icons/gi";
 import { MdPets, MdToys } from "react-icons/md";
 import { RiHeartsFill, RiMoonClearFill } from "react-icons/ri";
 import { BiBone, BiRestaurant } from "react-icons/bi";
-import { useTheme } from "../context/ThemeContext";
 
 const PetComponent = () => {
-  const { isDarkMode } = useTheme();
   const [stats, setStats] = useState({
     health: 100,
     hunger: 100,
@@ -303,13 +301,7 @@ const PetComponent = () => {
   }, [stats, happiness, cleanliness]);
 
   return (
-    <div
-      className={`relative ${
-        isDarkMode ? "bg-gray-800/20" : "bg-white/20"
-      } backdrop-blur-sm p-4 rounded-xl border ${
-        isDarkMode ? "border-gray-700/50" : "border-gray-200/50"
-      }`}
-    >
+    <div className="relative bg-gray-900/20 p-4 rounded-xl">
       {/* Controls primeiro */}
       <div className="flex gap-2 justify-center">
         {!isSleeping && (
@@ -378,24 +370,14 @@ const PetComponent = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 rounded-lg shadow-lg
-              ${isDarkMode ? "bg-gray-800/95" : "bg-white/95"} 
-              ${isDarkMode ? "text-white" : "text-gray-800"}
-              border ${isDarkMode ? "border-gray-700" : "border-gray-200"}
-              backdrop-blur-sm w-[calc(100vw-2rem)] md:w-96 max-h-[60vh] overflow-y-auto
-              scrollbar-thin ${
-                isDarkMode
-                  ? "scrollbar-thumb-gray-600"
-                  : "scrollbar-thumb-gray-400"
-              } scrollbar-track-transparent`}
+              ${isSleeping ? "bg-gray-800/95" : "bg-gray-900/95"} 
+              text-white w-[calc(100vw-2rem)] md:w-96 max-h-[60vh] overflow-y-auto
+              scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent`}
           >
             {/* Stats content */}
             <div className="p-4 space-y-3">
               {/* Pet Info Header - Sticky */}
-              <div
-                className={`sticky top-0 z-10 bg-inherit pb-2 mb-2 border-b ${
-                  isDarkMode ? "border-gray-700" : "border-gray-200"
-                }`}
-              >
+              <div className="sticky top-0 z-10 bg-inherit pb-2 mb-2 border-b border-gray-700">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <GiCat className="text-xl text-amber-500" />
@@ -412,11 +394,7 @@ const PetComponent = () => {
                 </div>
                 {/* Mood Message */}
                 {moodMessage && (
-                  <div
-                    className={`text-sm text-center ${
-                      isDarkMode ? "bg-gray-700/50" : "bg-gray-100/50"
-                    } p-2 mt-2 rounded-lg`}
-                  >
+                  <div className="text-sm text-center bg-gray-800/50 p-2 mt-2 rounded-lg">
                     {moodMessage}
                   </div>
                 )}
@@ -448,13 +426,7 @@ const PetComponent = () => {
                 <StatBar value={happiness} color="bg-pink-400" />
               </div>
               <div className="mt-4">
-                <h4
-                  className={`text-sm font-medium mb-2 ${
-                    isDarkMode ? "text-gray-300" : "text-gray-700"
-                  }`}
-                >
-                  Brinquedos
-                </h4>
+                <h4 className="text-sm font-medium mb-2">Brinquedos</h4>
                 <div className="flex gap-2">
                   {toys.map((toy) => (
                     <button
@@ -471,13 +443,7 @@ const PetComponent = () => {
                 </div>
               </div>
               <div className="mt-4">
-                <h4
-                  className={`text-sm font-medium mb-2 ${
-                    isDarkMode ? "text-gray-300" : "text-gray-700"
-                  }`}
-                >
-                  Conquistas
-                </h4>
+                <h4 className="text-sm font-medium mb-2">Conquistas</h4>
                 <div className="flex gap-2">
                   {achievements.map((achievement) => (
                     <div
@@ -494,33 +460,19 @@ const PetComponent = () => {
                   ))}
                 </div>
               </div>
-              <div
-                className={`mt-4 space-y-1 text-xs ${
-                  isDarkMode ? "opacity-80" : "opacity-70"
-                }`}
-              >
+              <div className="mt-4 space-y-1 text-xs opacity-80">
                 {activities.map((activity, index) => (
                   <div key={index}>{activity}</div>
                 ))}
               </div>
               <div className="mt-4">
-                <h4
-                  className={`text-sm font-medium mb-2 ${
-                    isDarkMode ? "text-gray-300" : "text-gray-700"
-                  }`}
-                >
-                  Alimentação
-                </h4>
+                <h4 className="text-sm font-medium mb-2">Alimentação</h4>
                 <div className="flex gap-2 flex-wrap">
                   {foods.map((food) => (
                     <button
                       key={food.id}
                       onClick={() => feedWithFood(food)}
-                      className={`p-2 rounded-lg transition-colors ${
-                        isDarkMode
-                          ? "bg-gray-700/50 hover:bg-gray-600/50"
-                          : "bg-gray-100/50 hover:bg-gray-200/50"
-                      }`}
+                      className="p-2 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors"
                       disabled={isSleeping}
                     >
                       <div className="text-center">
