@@ -44,10 +44,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="/callback"
-                element={<Navigate to="/music" replace />}
-              />
+              <Route path="/callback" element={<SpotifyCallback />} />
               <Route path="/chat" element={<ChatComponent />} />
               <Route
                 path="/pet"
