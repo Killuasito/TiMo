@@ -200,20 +200,30 @@ function MusicPlayer() {
   }, [isDarkMode]);
 
   useEffect(() => {
-    const token = localStorage.getItem("spotify_token");
-    if (!token && window.location.hash) {
+    // Handle token from URL hash
+    const handleToken = () => {
       const hash = window.location.hash;
-      const token = hash
-        .substring(1)
-        .split("&")
-        .find((elem) => elem.startsWith("access_token"))
-        ?.split("=")[1];
+      if (hash) {
+        const token = hash
+          .substring(1)
+          .split("&")
+          .find((elem) => elem.startsWith("access_token"))
+          ?.split("=")[1];
 
-      if (token) {
-        localStorage.setItem("spotify_token", token);
-        setAccessToken(token);
+        if (token) {
+          localStorage.setItem("spotify_token", token);
+          setAccessToken(token);
+          // Clean the URL without reloading the page
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+          );
+        }
       }
-    }
+    };
+
+    handleToken();
   }, []);
 
   const handleAddTrack = (e) => {
@@ -273,12 +283,16 @@ function MusicPlayer() {
   };
 
   const loginToSpotify = () => {
+    // Store current route to return after auth
+    localStorage.setItem("spotify_auth_return", window.location.pathname);
+
     const authEndpoint = "https://accounts.spotify.com/authorize";
     const queryParams = new URLSearchParams({
       client_id: spotifyConfig.clientId,
-      redirect_uri: spotifyConfig.redirectUri,
+      redirect_uri: window.location.origin + "/music",
       scope: spotifyConfig.scopes.join(" "),
       response_type: "token",
+      show_dialog: true,
     });
 
     window.location = `${authEndpoint}?${queryParams.toString()}`;
