@@ -19,9 +19,11 @@ import { ThemeProvider } from "./context/ThemeContext";
 import ChatComponent from "./components/ChatComponent";
 import PetWrapper from "./components/PetWrapper";
 import { useEffect } from "react";
+import SpotifyCallback from "./components/SpotifyCallback";
 
 function App() {
   useEffect(() => {
+    // Check if we're on the callback route and have a hash
     if (
       window.location.pathname === "/spotify-callback" &&
       window.location.hash
@@ -34,7 +36,8 @@ function App() {
 
       if (token) {
         localStorage.setItem("spotify_token", token);
-        window.location.href = "/music";
+        // Use window.location.replace instead of Navigate
+        window.location.replace("/music");
       }
     }
   }, []);
@@ -71,10 +74,7 @@ function App() {
                   </div>
                 }
               />
-              <Route
-                path="/spotify-callback"
-                element={<Navigate to="/music" replace />}
-              />
+              <Route path="/spotify-callback" element={<SpotifyCallback />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
