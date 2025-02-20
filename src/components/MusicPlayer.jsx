@@ -175,6 +175,7 @@ function MusicPlayer() {
   const [accessToken, setAccessToken] = useState(
     localStorage.getItem("spotify_token")
   );
+  const [currentTrackUrl, setCurrentTrackUrl] = useState("");
   const [editingTrack, setEditingTrack] = useState(null);
   const [showMenu, setShowMenu] = useState(null);
   const [themeColor, setThemeColor] = useState(() => {
@@ -205,6 +206,29 @@ function MusicPlayer() {
       setAccessToken(token);
     }
   }, []);
+
+  useEffect(() => {
+    if (accessToken && playlist[currentTrack]) {
+      fetchTrackUrl(playlist[currentTrack].id);
+    }
+  }, [accessToken, currentTrack]);
+
+  const fetchTrackUrl = async (trackId) => {
+    try {
+      const response = await fetch(
+        `https://api.spotify.com/v1/tracks/${trackId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      const data = await response.json();
+      setCurrentTrackUrl(data.preview_url || playlist[currentTrack].embedUrl);
+    } catch (error) {
+      console.error("Erro ao buscar URL da música:", error);
+    }
+  };
 
   const handleAddTrack = (e) => {
     e.preventDefault();
@@ -499,7 +523,7 @@ function MusicPlayer() {
               {accessToken ? (
                 <iframe
                   title={`${playlist[currentTrack].title}`}
-                  src={`${playlist[currentTrack].embedUrl}?theme=0`} // Removido autoplay e outros parâmetros
+                  src={`${currentTrackUrl}?theme=0`} // Removido autoplay e outros parâmetros
                   width="100%"
                   height={window.innerWidth < 768 ? "152" : "352"}
                   style={{ borderRadius: "12px" }}
