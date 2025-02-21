@@ -208,7 +208,13 @@ function ChatComponent() {
 
   const fetchMessages = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || "Erro ao carregar mensagens");
@@ -224,12 +230,6 @@ function ChatComponent() {
     e.preventDefault();
     if (!newMessage.trim()) return;
 
-    // Aplicar formatações ao texto
-    let formattedContent = newMessage;
-    if (textFormat.bold) formattedContent = `**${formattedContent}**`;
-    if (textFormat.italic) formattedContent = `_${formattedContent}_`;
-    if (textFormat.underline) formattedContent = `__${formattedContent}__`;
-
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat`, {
         method: "POST",
@@ -237,10 +237,8 @@ function ChatComponent() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          content: formattedContent,
+          content: newMessage,
           sender: currentUser,
-          fontSize: fontSize, // Adicionar tamanho da fonte
-          textFormat: textFormat, // Adicionar informações de formatação
         }),
       });
 
